@@ -1,0 +1,7 @@
+"0","paket <- c(""hemat1"",""hemat2"",""hemat1"",""hemat3"",""hemat2"",""hemat3"",""hemat3"",""hemat3"", ""hemat2"", ""hemat2"")"
+"0","# gunakan function most"
+"0","most(paket)"
+"1","[1]"
+"1"," ""hemat2"""
+"1","
+"

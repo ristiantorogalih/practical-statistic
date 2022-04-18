@@ -1,0 +1,3 @@
+"0","# scatter plot"
+"0","# run seluruh code bersamaan"
+"0","plot(saham_A, saham_B)"

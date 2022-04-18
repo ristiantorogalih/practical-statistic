@@ -1,0 +1,2 @@
+"0","df <- data.frame(store=c(""Jakarta"",""Bandung"",""Surabaya""), sales=c(1000,2000,3000), revenue=c(150,210,500))"
+"0","df"

@@ -1,0 +1,4 @@
+"0","# density plot: 50 random data"
+"0","# coba ubah 50 dengan angka lebih tinggi, distribusi akan semakin normal"
+"0","x <-  rnorm(50,0,1)"
+"0","plot(density(x))"

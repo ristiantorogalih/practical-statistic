@@ -1,0 +1,4 @@
+"0",""
+"0","# mengurutkan dari kecil ke besar"
+"0","#cara 1"
+"0","retail_clean[order(retail_clean$Profit, decreasing = FALSE),]"

@@ -1,0 +1,3 @@
+"0","retail$Ship.Mode <- as.factor(retail$Ship.Mode)"
+"0","retail$Segment <- as.factor(retail$Segment)"
+"0","retail"

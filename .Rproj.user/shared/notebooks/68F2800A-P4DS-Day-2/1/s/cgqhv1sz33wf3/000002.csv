@@ -1,0 +1,2 @@
+"0","retail$Order.Date<-as.Date(retail$Order.Date, format = ""%m/%d/%y"")"
+"0","retail"

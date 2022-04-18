@@ -1,0 +1,6 @@
+"0","# generate random data"
+"0","set.seed(100)"
+"0","saham_C <- rnorm(n = 20, mean = 1000, sd = 8)"
+"0","saham_D <- sample(saham_B)"
+"0","saham_E <- saham_A+50"
+"0","saham <- data.frame(saham_A,saham_B,saham_C,saham_D,saham_E)"

@@ -1,0 +1,3 @@
+"0",""
+"0","#cara 2"
+"0","retail_clean[order(-retail_clean$Profit),]"

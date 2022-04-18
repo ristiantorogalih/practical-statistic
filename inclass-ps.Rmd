@@ -1,0 +1,832 @@
+---
+title: 'Practical Statistics : In-class materials'
+author: "Team Algoritma"
+date: "`r format(Sys.Date(), '%B %e, %Y')`"
+output:
+  html_document:
+    theme: cosmo
+    highlight: tango
+    toc: true
+    toc_float:
+      collapsed: false
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+# clear-up the environment
+rm(list = ls())
+
+# chunk options
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  fig.align = "center",
+  comment = "#>"
+)
+```
+
+# Training Objective
+
+```{r, out.width = "100%", echo = FALSE, fig.align = "center"}
+knitr::include_graphics("image/PS.png")
+```
+    
+# Statistika Descriptive
+
+Statistika Deskriptif : untuk menggambarkan karakteristik dari data. Dalam menggambarkan karakteristik data bisa menggunakan : grafik, tabel, summary. Contoh: bisa digunakan dalam membuat reporting, digunakan dalam exploratory data analysis (EDA).
+
+## Ukuran Pemusatan Data {.tabset}
+
+Ukuran pemusatan data biasanya kita gunakan untuk melihat gambaran dari data kita secara general seperti apa. Oleh karena itu, nilai ukuran pemusatan data dibuat agar kita memperoleh informasi yang cukup untuk mewakili seluruh nilai yang ada pada data. Ada beberapa acuan yang dapat digunakan untuk menggambarkan data secara umum; yaitu: **mean**, **median**, dan **modus**.
+
+### Mean
+
+Mean adalah nilai rataan dari suatu *data numerik*. Mean dapat diformulasikan sebagai $\bar x = \frac {\sum x_i}{n}$. Pada R, kita dapat mencari nilai mean dengan fungsi `mean()`.
+
+**Studi kasus :**
+
+Misal saya seorang pengusaha kuliner. Saya ingin menargetkan profit bulan depan saya namun yang saya miliki adalah data profit selama 10 bulan terakhir. Saya ingin menargetkan target profit kedepan saya dengan metode statistik.
+
+```{r}
+profit <- c(4000, 5000, 3500, 4500, 5500, 6500, 7500, 5500, 4800, 6800)
+
+mean(profit)
+```
+
+> Catatan: Cara paling sederhana untuk melakukan prediksi nilai kedepan dari sekumpulan data kita yaitu menggunakan nilai mean.
+
+Karakteristik dari mean:
+
+* cenderung nilainya bias jika terdapat data outlier
+
+
+outlier = pencilan adalah nilai ekstrim dari kumpulan data lain
+
+
+### Median
+
+Median adalah nilai tengah data setelah data diurutkan. Untuk memperoleh median, sebelumnya data harus diurutkan (sorting) terlebih dahulu. Di R kita dapat menggunakan command `median()`.
+
+**Studi kasus :**
+
+```{r}
+profit2 <- c(4000, 5000, 3500, 4500, 5500, 6500, 7500, 5500, 4800, 300000)
+# cari median
+median(profit2)
+mean(profit2)
+```
+
+Harus dirun 1 chunk
+
+```{r}
+hist(profit2, breaks = 50)
+abline(v = mean(profit2), col = "red", lwd = 2)
+abline(v = median(profit2), col = "blue", lwd = 2)
+```
+
+Karakteristik dari median: 
+
+* tidak sensitif terdapat nilai ekstrim/outlier 
+* baik digunakan untuk data yang memiliki outlier atau berdistribusi **skewed** (condong kiri/kanan)
+* cenderung statis apabila terdapat data yang banyak berulang
+
+### Trimmed Mean
+
+*Trimmed Mean* adalah proses memotong atau membuang data yang jauh dari pusatnya atau bisa juga dikatakan untuk membuang nilai data yang ekstrim. Apabila menggunakan *trimmed mean* 10% berarti akan memotong data 10% diujung kiri dan 10% diujung kanan distribusi data.
+
+**Studi kasus :**
+
+Masih menggunakan contoh yang sama seperti yang diatas. Ternyata usaha yang saya miliki pada saat bulan ramadhan permintaannya meningkat pesat sehingga profit yang saya hasilkan sangat besar. Selanjutnya dari profit yang saya peroleh 10 bulan sebelumnya tersebut termasuk bulan ramadhan, saya ingin menargetkan profit dibulan kedepannya.
+
+```{r}
+profit2 <- c(4000, 5000, 3500, 4500, 5500, 6500, 7500, 5500, 4800, 300000)
+# cari nilai trim mean
+summary(profit2)
+mean(profit2, trim = 0.1)
+
+```
+
+> Catatan: bisa digunakan untuk menggambarkan karakteristik data dengan catatan akan kehilangan informasi sebesar 10% data diujung kanan dan 10% data di ujung kiri.
+
+Kekurangannya dari trimmed mean : kita bisa saja kehilangan informasi yang sebenarnya berguna untuk kita.
+
+### Modus
+
+Modus untuk mencari nilai data yang paling sering muncul. Biasanya digunakan untuk data yang kategorik. Untuk mencari nilai modus dapat menggunakan function berikut:
+
+```{r}
+most <- function(x){
+  as.character(names(sort(-table(x)))[1])
+}
+```
+
+Studi kasus:
+
+Pemilik restoran menawarkan 3 paket hemat yaitu paket hemat1, hemat2, dan hemat3. Pemilik restoran ingin mengetahui bulan berikutnya paket mana yang paling banyak dipesan:
+```{r}
+paket <- c("hemat1","hemat2","hemat1","hemat3","hemat2","hemat3","hemat3","hemat3", "hemat2", "hemat2")
+# gunakan function most
+most(paket)
+```
+
+Kapan menggunakan mean, median, dan modus?
+
+* `mean` digunakan saat data yang kita miliki **tidak ada outlier** atau sebarannya merata
+* `median` digunakan saat data yang kita miliki **terdapat outlier** atau nilai ektrim
+* `modus` digunakan saat data yang kita miliki kategorikal/factor
+
+Notes:
+Output modus bisa lebih dari 1 
+
+## Ukuran Sebaran Data{.tabset}
+
+### Variansi
+
+Variansi digunakan untuk melihat variasi dari data yang dimiliki. Bisa digunakan untuk melihat **seberapa informatif data yang dimiliki**. Semakin besar nilai variansi maka semakin informatif data kita. Untuk melakukan perhitungan variansi pada R kita bisa gunakan `var()`.
+
+Untuk melihat seberapa beragam data yang kita miliki. Semakin mendekati 0 artinya data kita tidak beragam.
+
+Formulasi variansi : $$var = \frac{\sum (x_i - \bar{x})^2}{n-1}$$ 
+
+Range variansi : 0 s/d Inf
+
+**Studi kasus:**
+
+Perusahaan Startup sedang menseleksi daerah yang cocok untuk kantor baru mereka. Mereka memiliki informasi tentang harga sewa bangunan perkantoran di daerah A dan daerah B. 
+```{r}
+# data
+harga_A <- c(400,410,420,400,410,420,400,410,420,400,410,420,400)
+harga_B <- c(130,430,650,540,460,320,380,550,650,470,330,140,270)
+```
+
+Setelah dibandingkan, rata-rata harga bangunan kedua daerah sama:
+
+```{r}
+# rata-rata harga
+mean(harga_A)
+mean(harga_B)
+```
+
+Mari bandingkan dari sisi lain, yaitu tingkat keberagaman data (variance). Daerah manakah yang harganya lebih bervariansi?
+
+```{r}
+# cari nilai variance
+var(harga_A)
+var(harga_B)
+```
+
+
+Daerah manakah yang lebih baik untuk dijadikan area perkantoran? 
+- BSD (peluang mendapat sewa harga murah)
+- Ciputat (harga sewa cenderung seragam)
+
+
+Note:
+
+* Semakin besar variance, semakin beragam data
+* Nilai variance: 0 - Inf
+* Nilai tidak bisa diinterpretasikan langsung karena merupakan nilai kuadrat, hanya bisa membandingkan variance antar data.
+* Variance yang diharapkan bisa kecil/besar, tergantung kebutuhan bisnis.
+* Nilai variance bergantung pada skala data!
+
+**Contoh:**
+
+Di bawah ini, data mana yang lebih bervariasi?
+
+```{r}
+# data
+luas_rumah <- c(100,100,90,90,90,100,100,90,100,100)
+harga_sewa <- c(1,2,3,6,5,8,9,1,7,4) # dalam juta
+```
+
+```{r}
+# cek variance
+var(luas_rumah)
+var(harga_sewa)
+```
+
+### Standar deviasi
+
+Standar deviasi adalah **akar dari variansi**. Tujuannya untuk melihat seberapa jauh tiap observasi terhadap rata-rata. Semakin mendekati 0 artinya data tidak jauh berbeda dengan rata-rata.  Untuk melakukan perhitungan standar deviasi pada R kita bisa gunakan `sd()`.
+
+Formulasi standar deviasi: $$sd = \sqrt{var}$$
+
+Studi Kasus:
+
+Standar deviasi digunakan untuk mengukur risiko saham. Misal, seseorang ingin mencoba investasi saham. Kemudian, ia mencari informasi mengenai pergerakan saham A dan saham B di 20 periode terakhir.
+
+```{r}
+saham_A <- c(1000,1200,1100,1400,1500,1450,1300,1250,1400,1500,2000,1900,1800,1750,1500,1900,1850,1000,1900, 1850)
+saham_B <- c(1000,999,995,1001,990,1002,998,1001,1010,1012,1011,989,1012,1010,1013,995,994,990,1000,1015)
+```
+
+
+Andi adalah seorang investor pemula. Bantu Andi untuk menentukan saham mana yang lebih baik dia pilih untuk bermain investasi! Gunakan nilai **mean** dan **standar deviasi**.
+
+```{r}
+mean(saham_A)
+sd(saham_A)
+mean(saham_B)
+sd(saham_B)
+```
+
+Saham mana yang memiliki volatilitas lebih tinggi?
+Saham A
+
+```{r}
+
+```
+
+Saham mana yang lebih baik Andi beli? Sertakan alasannya.
+
+**Dive deeper:**
+
+1. Saya sebagai tim marketing di suatu perusahaan retail tentunya ingin memperoleh profit semaksimal mungkin. Bagaimana keadaan profit yang saya inginkan dari sisi mean dan variansi ?
+mean high, variance tinggi
+
+2. Saya sebagai tim pengajar di Algoritma tentunya ingin setiap student memperoleh score yang tinggi. Bagaimana keadaan score yang saya inginkan dari sisi mean dan variansi ?
+mean high, variance rendah
+
+3. Saya sebagai tim sales di suatu perusahaan retail menerapkan diskon dalam penjualan yang dilakukan untuk menarik konsumen, namun tentunya ingin diskon yang diberikan rendah tetapi tetap menarik konsumen. Bagaimana keadaan diskon yang saya inginkan dari sisi mean dan variansi ?
+mean low, variance tinggi
+
+4. Jika keadaan pada nomor 3 diterapkan pada sisi konsumen. Bagaiman keadaan diskon yang saya inginkan dari sisi mean dan variansi ?
+mean high, variance rendah
+
+```{r}
+
+```
+
+### Range
+
+Fungsi range mengembalikan 2 buah nilai yaitu nilai minimum dan maksimum. apabila ingin menghitung selisih dari 2 nilai tersebut bisa dilakukan operasi pengurangan.
+selisih nilai max dan min kurang menggambarkan range dari sebaran, karena bila ada data outlier maka range tidak menggambarkan range sebaran data yang sesungguhnya.
+
+Kita akan menggunakan data `workshop.csv` yang tersimpan di folder `data_input`
+```{r}
+# import data
+retail <- read.csv("data_input/workshop.csv")
+
+```
+
+Carilah range nilai dari `Sales` pada data retail
+```{r}
+range(retail$Sales)
+summary(retail$Sales)
+```
+
+### IQR (Inter Quantile Range)
+
+IQR merupakan jarak dari Q1 ke Q3. IQR bisa digunakan untuk melihat range sebaran dari data yang ada
+
+Carilah nilai IQR dari variabel `Sales` pada data retail
+```{r}
+IQR(retail$Sales)
+```
+
+IQR digunakan untuk menentukan nilai pada data kita termasuk outlier atau bukan. 
+
+### Boxplot
+
+```{r}
+boxplot(retail$Sales)
+```
+
+
+Boxplot merupakan plot yang menggambarkan sebaran data
+
+```{r, out.width = "100%", echo = FALSE, fig.align = "center"}
+knitr::include_graphics("image/boxplot.png")
+```
+
+Beberapa hal yang harus diperhatikan dalam boxplot:
+
+* Banyaknya data dari Q1 ke nilai minimum (bukan pagar bawah) adalah 25%
+* Banyaknya data dari Q1 ke Q2 adalah 25%
+* Banyaknya data dari Q2 ke Q3 adalah 25%
+* Banyaknya data dari Q1 ke Q3 (IQR) adalah 50%
+* Banyaknya data dari Q3 ke nilai maksimum (bukan pagar atas) adalah 25%   
+* Boxplot bisa mengindikasikan distribusi data:
+  + box yang berada ditengah = distribusi normal (memadat di tengah)
+  + box yang mendekati daerah kiri/kanan (bawah/atas) = distribusi skewed
+  + bila median mendekati Q1 maka nilai pada data cenderung rendah.   
+
+## Covariance
+
+
+Covariance menunjukkan bagaimana variansi 2 data (variable yang berbeda) bergerak bersamaan. Bila yang pergerakannya serupa maka covariance positif, bila tidak serupa maka covariance negatif.
+
+Tujuan dr covariance: melihat hubungan dari 2 variabel/kolom
+
+* Formula Covariance: 
+
+$$Cov(X, Y) = \frac{1}{n-1}\sum\limits^n_{i=1}(X_i - \mu_X)(Y_i - \mu_Y)$$
+
+* Fungsi di R: `cov()`
+
+```{r, out.width = "100%", echo = FALSE, fig.align = "center"}
+knitr::include_graphics("image/cov-f.png")
+```
+
+Range covariance : -Inf sampai Inf
+cov 0 = 2 variabel saling tak berhubungan
+
+**Contoh:**
+
+Hitunglah covariance antara `saham_A` dan `saham_B`! Bagaimana hubungannya? 
+
+```{r}
+cov(saham_A, saham_B)
+```
+
+contoh: harga batu bara dunia apakah mempengaruhi emiten tambang
+
+Interpretasi:
+
+
+Kelemahan: Seperti variance, covariance tidak memiliki batasan nilai untuk mengukur kekuatan hubungan antar dua variabel (-inf s.d inf), sehingga kita hanya bisa mengetahui apakah hubungannya positif atau negatif. Oleh karena itu, hadir **correlation**.
+
+### Correlation
+
+Correlation memampatkan nilai covariance yang dari -inf s.d inf menjadi **-1 s.d 1** sehingga bisa diukur kekuatan hubungan antar data (variable).
+
+* Formula Correlation: 
+
+$$Cor(X,Y) = \frac{Cov(X,Y)}{\sqrt{Var(X)Var(Y)}}$$
+
+* Fungsi di R: `cor()`
+* Nilai korelasi: -1 sampai 1. Bila korelasi A & B mendekati..
+  + -1 = negatif kuat -> bila A naik, B pasti turun.
+  + 0 = tidak berkorelasi -> bila A naik, kita tidak tahu pasti apakah B akan naik/turun.
+  + 1 = positif kuat -> bila A naik, B pasti naik.
+* Semakin tinggi nilai korelasi, semakin bisa kita memprediksi nilai suatu variable menggunakan nilai variable lainnya.
+
+**Contoh:**
+
+Adakah korelasi antara `saham_A` dan `saham_B`, bagaimana hubungan dan kekuatannya?
+
+```{r}
+cor(saham_A, saham_B)
+```
+
+Jawaban: 
+1. benar saham A naik, saham B naik
+2. hubungan antar A dan B lemah karena mendekati 0
+
+Visualisasi korelasi dengan scatterplot:
+
+```{r}
+# scatter plot
+# run seluruh code bersamaan
+plot(saham_A, saham_B)
+abline(lm(saham_B ~ saham_A), 
+       col = 'red')
+```
+
+Ilustrasi correlation:
+
+```{r, out.width = "100%", echo = FALSE, fig.align = "center"}
+knitr::include_graphics("image/correlation.png")
+```
+**Dive Deeper!**
+
+Dena seorang investor dan memiliki modal untuk membeli dua saham sekaligus. Dena telah mengumpulkan data historis 5 saham potensial dan melihat pergerakannya:
+
+```{r echo=F}
+# generate random data
+set.seed(100)
+saham_C <- rnorm(n = 20, mean = 1000, sd = 8)
+saham_D <- sample(saham_B)
+saham_E <- saham_A+50
+saham <- data.frame(saham_A,saham_B,saham_C,saham_D,saham_E)
+```
+
+```{r}
+# inspect data
+summary(saham)
+```
+
+1. Saham dengan karakteristik seperti apa yang sebaiknya Dena beli:
+
+a. korelasi antar saham: 
+b. saham memiliki variansi: 
+
+2. dengan mempertimbangkan **sebaran data menggunakan boxplot**, serta **korelasi antar saham**, pilih 2 saham yang paling baik untuk Dena beli!
+
+```{r}
+# boxplot
+boxplot(saham$saham_A)
+boxplot(saham$saham_B)
+boxplot(saham$saham_C)
+boxplot(saham$saham_D)
+boxplot(saham$saham_E)
+```
+```{r}
+# buat matriks korelasi data
+cor(saham)
+```
+
+Untuk visualisasi korelasi yang lebih apik dapat menggunakan fungsi `ggcorr()` dari package **GGally**:
+
+```{r fig.height = 4}
+# install package di console:
+# install.packages("GGally")
+
+# load library:
+library(GGally)
+
+# visualisasi:
+ggcorr(saham, label=T)
+```
+
+# Inferential Statistics
+
+Inferential Statistics membantu kita **menarik kesimpulan tentang keseluruhan data (populasi) dengan menggunakan sebagian informasinya saja (sampel)**. Aplikasi inferensial statistik diantaranya:
+
+* Quick Count Pemilu
+* Quality Control
+* Riset Obat
+
+Setiap data memiliki distribusi. Distribusi data yang spesial dan berperan dalam inferential statistics adalah **distribusi normal**. 
+
+## Normal Distribution
+
+```{r, out.width = "100%", echo = FALSE, fig.align = "center"}
+knitr::include_graphics("image/normal-distribution.jpg")
+```
+
+Karakteristik:
+
+* kurva berbentuk lonceng; simetris
+* luas area dibawah kurva = 1
+* persebaran data:
+  + 68% data berada di rentang +- 1 standar deviasi dari mean
+  + 95% data berada di rentang +- 2 standar deviasi dari mean
+  + 99.7% data berada di rentang +- 3 standar deviasi dari mean
+* **Standar normal baku** adalah distribusi normal dimana mean = 0 dan standar deviasi = 1. 
+
+Distribusi normal banyak digunakan pada inferensial statistik karena dicetuskannya **Central Limit Theorem**.
+
+> Semakin bertambahnya jumlah sampel yang diambil secara acak (random), maka distribusi sampel akan mengikuti distribusi normal.
+
+```{r}
+# density plot: 50 random data
+# coba ubah 50 dengan angka lebih tinggi, distribusi akan semakin normal
+x <-  rnorm(50,0,1)
+plot(density(x))
+```
+
+Data yang mendekati distribusi normal dapat diasumsikan memiliki karakteristik yang sama dengan distribusi normal. Karakteristik distribusi normal dimanfaatkan untuk penghitungan inferensial statistik:
+
+* Menghitung Probabilitas:
+  + Probability Mass Function
+  + Probability Density Function
+* Membuat Confidence Interval
+* Uji Hipotesis
+
+## Probability Mass Function
+
+Probabilitas yang digunakan ketika data yang dimiliki adalah data diskrit. Contoh data diskrit : banyak student, banyak barang yang dibeli, dsb. Misalkan kita ingin mencari peluang muncul dadu, jumlah pemain yang mengalami cidera, travel booking tiap customer, banyak nya produk yang terjual, dll. 
+
+discrete: bilangan bulat (ya/tidak, 0/1)
+
+Contoh kasus :
+
+Suatu bandara dalam satu hari terdapat 100 jadwal penerbangan, dari 100 penerbangan tersebut 20 diantaranya delay. Berapa peluang pesawat tidak delay?
+
+Untuk mencari peluang data diskrit dapat dicari dengan formula: $p(P) = \frac{n}{S}$
+
+dimana :
+
+* $p(P)$ : peluang kejadian yang ingin dicari
+* $n$ : banyaknya kejadian yang ingin dicari peluangnya
+* $S$ : total seluruh kejadian yang ada
+
+```{r}
+P_non_delay<- 80/100
+P_non_delay
+```
+
+## Probability Density Function (pdf)
+
+Probability yang digunakan ketika data yang dimiliki merupakan data kontinu. Untuk menghitung nilai pdf, dapat memanfaatkan perhitungan pada distribusi normal. 
+
+kontinu= desimal (contoh berat badan)
+
+**Z-score**
+
+Untuk dapat menghitung peluang data kontinu, kita dapat memanfaatkan nilai Z-score. Z-score adalah cara yang dapat digunakan untuk menstandarisasikan distribusi suatu data menjadi distribusi normal
+
+$Z-score = \frac{x-\bar x}{\sigma}$
+
+Ket:
+
+* Z = Z-score
+* x = titik data
+* $\bar x$ = mean
+* $\sigma$ = standar deviasi
+
+Contoh kasus :
+
+Misal rata-rata tinggi badan laki-laki di Indonesia 162 cm dan standar deviasi 7 cm. Berapa peluang student yang memiliki tinggi badan lebih dari 170 cm?
+
+```{r}
+
+#cara1
+# menghitung z score
+
+zscore<-(170-162)/7
+zscore
+# menghitung peluang kejadian
+pnorm(zscore, lower.tail = F)
+
+#cara2
+pnorm(170, mean = 162, sd = 7, lower.tail = F)
+```
+catatan:
+- z score adalah batasan (sumbu X) terhadap luas data
+- lower tail adalah luas area zscore, kalo false dia lebih dari zscore, kalo true dia kurang dari
+
+[Quick Summary]
+
+menghitung peluang:
+
+- kejadian discrete = kejadian terjadi/total kejadian
+
+- kejadian continu = dengan probability density function: menghitung Z-score -> hitung peluang (pnorm)
+
+
+**Knowledge Check**
+
+1. Berapa peluang seorang laki-laki di kelas Midas memiliki tinggi badan lebih dari 175 cm ? (3,17%)
+```{r}
+pnorm(175, mean = 162, sd = 7, lower.tail = F)
+```
+
+2. Berapa peluang seorang laki-laki di kelas memiliki tinggi badan kurang dari 175 cm ? (96,83%)
+```{r}
+pnorm(175, mean = 162, sd = 7, lower.tail = T)
+```
+
+3. Berapa peluang seorang laki-laki di kelas memiliki tinggi badan antara 165 dan 175 cm ? (30,24%)
+```{r}
+pnorm(175, mean = 162, sd = 7, lower.tail = T)-
+pnorm(165, mean = 162, sd = 7, lower.tail = T)
+#luas area <175 - luas area <165
+
+
+#atau
+
+pnorm(165, mean = 162, sd = 7, lower.tail = F)-
+pnorm(175, mean = 162, sd = 7, lower.tail = F)
+
+#atau
+
+1-pnorm(175, mean = 162, sd = 7, lower.tail = F)-pnorm(165, mean = 162, sd = 7, lower.tail = T)
+
+```
+
+## Confidence Interval
+
+Confidence interval (selang kepercayaan) berguna untuk menduga nilai mean populasi dengan sebuah interval (batas bawah, batas atas). Menebak dengan sebuah interval akan meminimalisir error dibandingkan hanya dengan menebak satu nilai.
+
+confidence level : 90%, 95%, 99%   
+alpha = 10%, 5%, 1% (margin error)
+
+* Formula: 
+
+$$CI= \bar{x} \pm Z_{\frac{\alpha}{2}}*SE$$
+
+* Ket: 
+  + $\bar{x}$ = rata-rata sampel
+  + $Z_{\frac{\alpha}{2}}$ = Z-score ketika alpha/2
+  + $\alpha$ = tingkat error yang ditolerasi
+  + tingkat kepercayaan = 1-$\alpha$
+  + SE = standard error
+
+Standard Error  mengukur kebaikan sampel dalam mewakilkan populasi. Standard Error digunakan untuk mengukur keakuratan sampel yang mewakili populasi dengan menggunakan standar deviasi. Semakin kecil nilai standard error, maka semakin representatif sampel dari keseluruhan populasi.
+
+$$SE = \frac{\sigma}{\sqrt n}$$
+* Ket: 
+  + $\sigma$ = standar deviasi sampel
+  + $n$ = jumlah sampel
+
+* Tahapan:
+  + hitung mean sampel
+  + hitung standar deviasi sampel & SE
+  + tentukan tingkat kepercayaan & $\alpha$
+  + tentukan Z alpha/2
+  + hitung confidence interval
+
+> Confidence Interval digunakan sebagai suatu selang yang digunakan untuk memprediksi suatu nilai, karena dengan menebak suatu nilai menggunakan range nilai tertentu memiliki resiko yang lebih kecil dibandingkan dengan hanya menebak suatu nilai dengan satu nilai tertentu.
+
+**Contoh:**
+
+Suatu perusahaan service laptop ingin memperkirakan rata-rata durasi service laptop dari perusahaannya untuk keperluan operasional. Perusahaan memiliki **300 data** durasi service laptop selama 3 bulan terakhir dengan rata-rata durasi **96,5** jam dan standar deviasi **22** jam.
+
+Berapakah confidence interval untuk rata-rata durasi service laptop? Gunakan tingkat kepercayaan 95%.
+
+Diketahui: 
+
+mean = 96.5 jam
+stdev = 22 jam
+jumlah data (n) = 300
+
+1. Hitung nilai SE
+
+```{r}
+SE<-22/sqrt(300)
+SE
+```
+
+2. Tentukan tingkat kepercayaan dan alpha
+
+```{r}
+# tingkat kepercayaan 95%; margin error = 5%
+
+```
+
+3. Hitung Z alpha/2
+
+```{r}
+# alpha/2 karena ada error dibagi 2 untuk data ekstrim atas dan bawah.
+# alpha/2 = 0.025
+0.05/2 #0.05 adalah margin error
+```
+
+untuk mencari peluang pake pnorm
+untuk mencari zscore pake qnorm
+
+```{r}
+z<-qnorm(0.025)
+z
+```
+
+
+4. Mendapatkan nilai CI
+
+```{r}
+CI_bawah<- 96.5  - z*SE
+CI_atas<- 96.5  + z*SE
+
+CI_bawah
+CI_atas
+```
+
+Jawaban: 94,01%-98.98%
+
+
+## Uji Hipotesis
+
+Digunakan untuk menguji apakah sampel data dapat merepresentasikan populasi dengan sebenarnya.
+
+Istilah-istilah:
+
+* Hipotesis: dugaan sementara yang harus diuji
+  + $H_0$ / null hypothesis: 
+    - kondisi standar
+    - umumnya keadaan yang tidak diharapkan 
+    - memiliki unsur kesamaan (=, >=, <=)
+  + $H_1$ / alternate hypothesis: 
+    - umumnya keadaan yang kita harapkan
+    - kontradiktif dengan $H_0$
+
+Contoh: 
+
+* $H_0$:
+  - Pemakaian masker tidak memberikan pengaruh pada laju penyebaran virus corona (=) 
+  - Penambahan teknisi tidak memberikan perbedaan durasi servis laptop (>=)
+  - Penerapan promo tidak memberikan perbedaan jumlah pembelian produk(<=)
+* $H_1$:
+  - Pemakaian masker memberikan pengaruh pada laju penyebaran virus corona (!=) 
+  - Penambahan teknisi menurunkan durasi servis laptop (<)
+  - Penerapan promo meningkatkan jumlah pembelian (>)
+  
+* $\alpha$:
+  + tingkat signifikansi/margin error
+  + umumnya 0.05
+* $1-\alpha$: tingkat kepercayaan
+* $p-value$:
+  + akan dibandingkan dengan alpha untuk untuk mengambil keputusan
+  + peluang data sampel berada pada bagian sangat ekstrim/berbeda signifikan dengan keadaan normal.
+  
+Pengambilan keputusan:
+
+* Jika $p-value$ < $\alpha$, maka tolak $H_0$
+* Jika $p-value$ > $\alpha$, maka gagal tolak $H_0$
+
+### Z-Test
+
+Uji hipotesis yang menggunakan Z-test bila:
+
+* standar deviasi populasi diketahui
+* jumlah sampel banyak (n > 30)
+
+**Contoh 1**
+
+Sebuah pabrik susu bubuk melakukan pengecekan terhadap berat produk mereka. Sebelumnya diketahui bahwa rata-rata berat bersih susu adalah **1000 gram** (tertera pada label produk) dan standar deviasi sebesar **30 gram**. Diambil sampel sebanyak **100 kaleng** dari yang beredar di pasaran dan diperoleh rata-rata berat bersih sebesar **995 gram**. Apakah susu bubuk benar memiliki berat bersih sesuai dengan yang tertera? Ujilah dengan **tingkat signifikansi 5%**.
+
+Jawab:
+
+**a. Tentukan Hipotesis**
+
+* $H_0$: berat bersih = 1000 gram
+* $H_1$: berat bersih < 1000 gram
+
+
+**b. Hitung Z-hitung & P-value**
+
+Diketahui:
+
+* mean populasi = 1000
+* stdev populasi = 30
+* n = 100
+* mean sampel = 995
+* alpha: 5% (0.05)
+
+```{r}
+# cari Z-score
+(995-1000)/30
+
+```
+
+```{r}
+# cari P-value
+pnorm(995, mean = 1000, sd = 30, lower.tail = T)
+```
+
+**c. Bandingkan P-value dengan alpha**
+p value: 0,43
+alpha: 0,05
+
+**d. Kesimpulan**
+p value>alpha, maka terima H0 (berat bersih susu adalah 1000 gram)
+
+
+**Latihan 2:**
+
+Lozy merupakan sebuah usaha yang bergerak dibidang fashion. Untuk memasarkan productnya, Lozy memasarkan product lewat digital platform dengan menggunakan seorang influencer untuk menjadi model pemasaran product Lozy. Sebelum menggunakan influenser tersebut, rata-rata likes yang diterima di digital platform Lozy sebesar 14000 likes dengan standar deviasi sebesar 5500 namun setelah menggunakan influencer tersebut dari 40 postingan yang ada ]rata-rata likes yang diterima oleh Lozy menjadi 20000. Sebagai tim marketing, kita ingin menganalisis apakah influencer tersebut memang secara signifkan menaikkan engagement dari konsumer Lozy atau tidak? Kita akan coba gunakan alpha 5%.
+
+Jawab:
+
+**a. Tentukan Hipotesis**
+
+* $H_0$: 
+* $H_1$: 
+
+**b. Hitung Z-hitung & P-value**
+
+```{r}
+# cari Z-score
+
+```
+
+```{r}
+# cari P-value
+
+```
+
+**c. Bandingkan P-value dengan alpha**
+
+
+**d. Kesimpulan**
+
+
+### T-Test
+
+T-test merupakan suatu uji yang digunakan untuk melakukan pengujian signifikansi. T-test digunakan ketika :
+
+* sampel yang dimiliki < 30
+* standar deviasi dari populasi tidak diketahui
+* fungsi untuk melakukan t-test yaitu `t.test()`
+
+**Studi Kasus**
+
+Quicker merupakan startup yang bertugas untuk membantu para startup lain mendapatkan dana hibah dari pemerintah. Umumnya, lama proses penyerahan berkas hingga dana dicairkan adalah **215 hari**. 
+
+Dikumpulkan data durasi proses pencairan dana dari **10** perusahaan startup yang menggunakan jasa Quicker sebagai berikut: 
+
+```{r}
+duration <- c(184, 181, 230, 169, 158, 204, 220, 197, 219, 223)
+```
+
+Pertanyaannya, apakah ketika menggunakan jasa quicker akan menghabiskan waktu lebih singkat untuk memperoleh pendanaan dari pemerintah?
+
+Jawab:
+
+1. Perumusan hyphotesis
+
+$H_0$ : pencairan dana bantuan >= 215 hari   
+$H_1$ : pencairan dana bantuan < 215 hari
+
+2. Hitung T-test
+
+```{r}
+t.test(x=duration, mean=215)
+```
+
+3. Kesimpulan:
+p-value: 0.000000000127
+p-value < alpha (default 5%) maka tolak H0
+quicker mampu mempersingkat pencairan dana bantuan
+

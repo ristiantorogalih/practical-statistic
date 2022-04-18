@@ -1,0 +1,3 @@
+"0","# import data"
+"0","retail <- read.csv(""data_input/workshop.csv"")"
+"0",""

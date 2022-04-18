@@ -1,0 +1,3 @@
+"0",""
+"0","#2. subset data retail_clean untuk bulan genap"
+"0","retail_clean[retail_clean$bulan %in% bulan_genap,]"

@@ -1,0 +1,8 @@
+"0","# install package di console:"
+"0","# install.packages(""GGally"")"
+"0",""
+"0","# load library:"
+"0","library(GGally)"
+"0",""
+"0","# visualisasi:"
+"0","ggcorr(saham, label=T)"

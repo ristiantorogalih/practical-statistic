@@ -1,0 +1,3 @@
+"0","retail_agg<-aggregate(Profit ~ Ship.Mode+ Category, data = retail_clean, FUN = length)"
+"0",""
+"0","retail_agg[order(retail_agg$Profit, decreasing = TRUE),]"

@@ -1,0 +1,3 @@
+"0","# baca dan periksa data disini"
+"0","base_file<-read.csv(""datainput/retail.csv"", sep = "","")"
+"0","head(x=base_file, n=25)"

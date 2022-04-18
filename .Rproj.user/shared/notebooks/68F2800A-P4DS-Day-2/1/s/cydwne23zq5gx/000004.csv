@@ -1,0 +1,3 @@
+"0","# cara 2 -> full path"
+"0","retail2 <- read.csv(file = ""E:/workspace/TRAINING ALGORITMA/DAY 1/online/P4DS/data_input/retail.csv"", sep = "","")"
+"0","retail2"

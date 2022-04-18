@@ -1,0 +1,2 @@
+"0","retail_clean$bulan <- months(x=retail_clean$Order.Date, abbreviate = F)"
+"0","retail_clean"

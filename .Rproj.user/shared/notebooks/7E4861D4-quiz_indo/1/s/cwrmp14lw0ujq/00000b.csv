@@ -1,0 +1,7 @@
+"0","# code Here"
+"0","dataset_a<-base_file[base_file$Profit>28.657 & base_file$Quantity <5,]"
+"0","nrow(dataset_a)"
+"1","[1]"
+"1"," 1380"
+"1","
+"

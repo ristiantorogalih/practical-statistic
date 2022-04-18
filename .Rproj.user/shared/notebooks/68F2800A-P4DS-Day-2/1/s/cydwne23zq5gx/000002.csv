@@ -1,0 +1,3 @@
+"0","# cara 1 -> relative path"
+"0","retail <- read.csv(file = ""data_input/retail.csv"", sep = "","")"
+"0","retail"

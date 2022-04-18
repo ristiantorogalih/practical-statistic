@@ -1,0 +1,4 @@
+"0",""
+"0","#cara 2"
+"0","retail_clean2<-subset(x=retail, select = -c(1,2,6))"
+"0","retail_clean2"

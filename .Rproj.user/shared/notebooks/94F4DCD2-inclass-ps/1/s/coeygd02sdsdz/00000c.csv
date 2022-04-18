@@ -1,0 +1,2 @@
+"0","abline(lm(saham_B ~ saham_A), "
+"0","       col = 'red')"

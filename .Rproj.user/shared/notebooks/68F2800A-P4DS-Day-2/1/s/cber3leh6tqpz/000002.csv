@@ -1,0 +1,2 @@
+"0","as.data.frame(prop.table(table(retail_clean$Ship.Mode, retail_clean$Category), "
+"0","           margin = 2))"

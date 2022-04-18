@@ -1,0 +1,136 @@
+---
+title: "P4DS Day 1"
+author: "Galih Widagdo"
+date: "15/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Mind Map P4DS
+
+```{r}
+knitr::include_graphics("Programming for Data Science.png")
+```
+
+# Data Structure
+
+## Atomic Vector
+Ciri: hanya satu dimensi dan punya 1 tipe data ter global
+
+Object (object!=variable)
+```{r}
+TA <- "galih"
+TA
+```
+
+Data Types:
+- Character: string
+```{r}
+Kursus <- c("Algoritma", "Data", "Science", 'Science')
+Kursus
+```
+
+```{r}
+class(Kursus)
+```
+
+
+- Numeric: bilangan desimal
+
+```{r}
+tinggi <- c(178,155.5,190,170.0)
+tinggi
+```
+
+```{r}
+class(tinggi)
+```
+
+
+- Integer: bilangan bulat saja
+```{r}
+tinggi2 <- c(130L, 150L)
+tinggi2
+```
+
+```{r}
+class(tinggi2)
+```
+
+- Logical: boolean
+
+```{r}
+logi <- c(TRUE, FALSE, TRUE)
+logi
+```
+```{r}
+class(logi)
+```
+
+- Multiple data type in object
+```{r}
+object<- c("string", 1, 1.5, TRUE)
+object
+```
+```{r}
+class(object)
+```
+
+Hal tersebut dikarenakan semua data type dipaksakan (coercion) menjadi char agar dapat diterima global, urutannya char-complex-numeric-int-logical
+
+## Data Type Transformation
+
+```{r}
+class(tinggi2)
+```
+
+```{r}
+tingginum <- as.numeric(tinggi2)
+class(tingginum)
+```
+
+NA = Not Applicable/ Not Available
+
+Mengubah tipe data:
+- as.numeric()
+- as.character()
+- as.integer()
+- as.logical()
+- as.complex()
+
+S3 Atomic Vector
+- Date as.Date()
+- Factor as.factor()
+Factor/categorical merupakan turunan dari integer. Sama seperti category di python
+
+
+## List
+ciri: 1 dimensi bisa multiple data type
+
+```{r}
+obj_list<-list(c(1,2,3),c("Newton","Night"))
+obj_list
+```
+
+slicing dengan dimensi:
+```{r}
+obj_list[1]
+```
+slicing tanpa dimensi:
+```{r}
+obj_list[[1]]
+```
+
+
+## Matrix
+ciri: 2 dimensi dan 1 tipe data
+```{r}
+matrix(data=1:10, nrow=5, ncol=T)
+```
+
+
+## Data Frame
+ciri: tabular, 2 dimensi dan bisa lebih dari 1 tipe data

@@ -1,0 +1,3 @@
+"0","most <- function(x){"
+"0","  as.character(names(sort(-table(x)))[1])"
+"0","}"
